@@ -1,0 +1,52 @@
+#include <ncurses.h>
+
+int main() {
+    initscr(); // 初始化屏幕
+    curs_set(0); // 隐藏光标
+    noecho(); // 不显示输入的字符
+    cbreak(); // 禁用行缓冲
+
+    int ch, i, j, k;
+    int map[20][10] = {0};
+    int block[4][4] = {
+        {1, 1, 1, 1}, // I型
+        {0, 1, 1, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}
+    };
+    int positionX = 5, positionY = 0;
+
+    while(1) {
+        for(i = 0; i < 20; i++) {
+            for(j = 0; j < 10; j++) {
+                mvprintw(i, j, "%c", map[i][j] ? (block[0][0] ? 'A' : ' ') : ' ');
+            }
+        }
+        
+        mvprintw(positionY, positionX, "v"); // 绘制方块
+
+        ch = getch(); // 获取用户输入
+        switch(ch) {
+            case 'a': // 向左移动
+                if(positionX > 0 && !map[positionY][positionX - 1])
+                    positionX--;
+                break;
+            case 'd': // 向右移动
+                if(positionX < 9 && !map[positionY][positionX + 1])
+                    positionX++;
+                break;
+            case 's': // 下落
+                if(positionY < 19 && !map[positionY + 1][positionX])
+                    positionY++;
+                break;
+            case 'w': // 旋转
+                // 旋转方块逻辑
+                break;
+            case 'q': // 退出游戏
+                endwin();
+                return 0;
+        }
+
+        usleep(100000); // 等待0.1秒
+    }
+}
